@@ -3,6 +3,8 @@ function [T_all, States_all, endTimes] = bounceSim(nBounces, timeout, StatesIn, 
 % N = [0; 0; 1];          % normal vector to plane
 % Origin = [0; 0; 0];     % displacement of plane from origin
 
+% Test comment
+
 options = odeset('Events', @event_func, 'MaxStep', 0.01);
 
 % initialize arrays
