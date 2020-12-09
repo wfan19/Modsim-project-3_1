@@ -60,7 +60,8 @@ end
 
     function [value, isterminal, direction] = event_func(~, States)
         P = States(1:3);
-        value = (P - origin).' * normal;
+        table_z = -normal(1)/normal(3) * (P(1) - origin(1)) - normal(2)/normal(3) * (P(2) - origin(2));
+        value =  P(3) - table_z;
         isterminal = 1;
         direction = -1;
     end
