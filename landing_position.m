@@ -2,9 +2,6 @@ function Pf = landing_position(N, nBounces, g, COR, V0, P0)
 
     N = N ./ norm(N);
 
-    g = 9.80;
-    COR = 0.95;
-
     V = zeros(3, nBounces);
     Vnew = zeros(3, nBounces);
     Vperps = zeros(3, nBounces);
@@ -22,7 +19,7 @@ function Pf = landing_position(N, nBounces, g, COR, V0, P0)
 
         P(:, bnc) = P(:, bnc - 1) + V(:, bnc - 1) * t + [0; 0; -1/2 * g] * t^2;
 
-        Vnew(:, bnc - 1) = V(:, bnc - 1) + [0; 0; -g] * t
+        Vnew(:, bnc - 1) = V(:, bnc - 1) + [0; 0; -g] * t;
 
         Vperp = dot(Vnew(:, bnc - 1), N) * N;
         Vperps(:, bnc) = Vperp;
@@ -30,5 +27,5 @@ function Pf = landing_position(N, nBounces, g, COR, V0, P0)
 
         V(:, bnc) = Vnew(:, bnc - 1) - Vperp * (1 + COR);
     end
-    Pf = P(:, end)
+    Pf = P(:, end);
 end
