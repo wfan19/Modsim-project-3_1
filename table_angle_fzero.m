@@ -36,7 +36,7 @@ function N = table_angle_fzero(pos_toss, v_toss)
         % delta x is the difference between the original height and h
 
         assert(norm(v_impact_time_based - v_impact) < 0.001);
-        v_impact2 = v_impact;
+        v_impact2 = v_impact; % for display outside of this scope
 
         % distance from origin at the time the ball is at height 0 + h
         d1 = pos_toss(x) + v_toss(x) * (v_impact(y) - v_toss(y)) / -g;
