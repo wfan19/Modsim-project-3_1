@@ -89,7 +89,7 @@ function N = table_angle_fzero_3d(pos_toss, v_toss)
         % aaa = vec_toss(x:y);
         bbb = pos_toss(x:y).' - origin(x:y); % vec_toss(x:y) + vec_impact(x:y);
         % projection = (aaa.' * bbb * bbb ./ norm(bbb) ^ 2) ./ COR; % [0, -1; 1, 0] *+ v
-        projection = (-v_impact(x:y) + v_toss(x:y) ./ COR) * 2;
+        projection = (-v_impact(x:y) + v_toss(x:y) ./ COR);
 %{
         % v_b = vec_toss(x:y);
         v_b = [1; 0];
