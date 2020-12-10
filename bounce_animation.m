@@ -1,4 +1,4 @@
-function bounce_animation_view(States, Normals, target)
+function bounce_animation(mode, States, Normals, target)
 x = [-10, 10];
 y = [-10, 10];
 [X, Y] = meshgrid(x, y);
