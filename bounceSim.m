@@ -1,4 +1,4 @@
-function [T_all, States_all, Normals_all, endTimes] = bounceSim(nBounces, timeout, StatesIn, g, COR, origin, func_normal, target)
+function [T_all, States_all, Normals_all, Targets_all, endTimes] = bounceSim(nBounces, timeout, StatesIn, g, COR, origin, func_normal, targets)
 % g = 9.8;                % m/s^2
 % N = [0; 0; 1];          % normal vector to plane
 % Origin = [0; 0; 0];     % displacement of plane from origin
@@ -12,17 +12,21 @@ T_all = [];
 States_all = [];
 endTimes = zeros(1, nBounces);
 Normals_all = [];
+Targets_all = [];
 
 % run a separate ode45 call for each bounce
 for bnc = 1 : nBounces
     % Before we "launch" the ball by starting the next simulation loop we
     % calculate the table angle we're going to use until after the next
     % bounce
-    if size(target, 1) == nBounces
-        current_normal = func_normal(StatesIn, target(bnc, :)); 
+    if bnc + 1 > size(targets, 1)
+        % current_target_aim: The position we're aiming for with the second
+        % bounce through controlling the normal vector
+        current_target_aim = Targets_all(end, :);
     else
-        current_normal = func_normal(StatesIn, target(1, :)); 
+        current_target_aim = targets(bnc + 1, :);
     end
+    current_normal = func_normal(StatesIn, current_target_aim); 
     
     tspan = linspace(0, timeout, timeout * 20);
     [T, StatesOut, ~, ~, event] = ode45(@rate_func, tspan, StatesIn, options);
@@ -33,6 +37,14 @@ for bnc = 1 : nBounces
     % The (:)' forces current_normal to be a row to follow ode45 syntax
     current_normals = repelem(current_normal(:)', length(T), 1);
     
+    % current_target_bounce: Where we actually hope the next bounce is going to be
+    if size(targets, 1) > 1
+        current_target_bounce = targets(bnc, :);
+    else
+        current_target_bounce = targets(1, :);
+    end
+    current_targets = repelem(current_target_bounce(:)', length(T), 1);
+    
     % store the results in the output vectors
     if bnc == 1
         T_all = T;
@@ -42,6 +54,7 @@ for bnc = 1 : nBounces
     
     States_all = [States_all; StatesOut];
     Normals_all = [Normals_all; current_normals];
+    Targets_all = [Targets_all; current_targets];
     endTimes(bnc) = T_all(end);
 
     % if ode45 timed out, then the ball never hit the table, and we quit
