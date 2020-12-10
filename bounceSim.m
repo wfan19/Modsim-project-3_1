@@ -1,4 +1,4 @@
-function [T_all, States_all, Normals_all, Targets_all, endTimes] = bounceSim(nBounces, timeout, StatesIn, g, COR, origin, func_normal, targets)
+function [T_all, States_all, Normals_all, Targets_all, endTimes] = bounceSim(nBounces, timeout, StatesIn, g, COR, origin, func_normal, targets, interpolation)
 % g = 9.8;                % m/s^2
 % N = [0; 0; 1];          % normal vector to plane
 % Origin = [0; 0; 0];     % displacement of plane from origin
@@ -41,7 +41,7 @@ for bnc = 1 : nBounces
     % Fill in list of normal vector postions, now that we know the end time
     % and step count
     % The (:)' forces current_normal to be a row to follow ode45 syntax
-    if bnc == 1
+    if bnc == 1 || ~interpolation
         current_normals = repelem(current_normal(:)', length(T), 1);
     else
         current_normals = interp_normals(Normals_all(end, :), current_normal(:)', length(T));
