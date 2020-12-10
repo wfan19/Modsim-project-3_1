@@ -19,12 +19,18 @@ for bnc = 1 : nBounces
     % Before we "launch" the ball by starting the next simulation loop we
     % calculate the table angle we're going to use until after the next
     % bounce
-    if bnc + 1 > size(targets, 1)
-        % current_target_aim: The position we're aiming for with the second
-        % bounce through controlling the normal vector
-        current_target_aim = Targets_all(end, :);
-    else
-        current_target_aim = targets(bnc + 1, :);
+    if size(targets, 1) > 1
+        % targets is a list of target positions
+        if bnc + 1 > size(targets, 1)
+            % current_target_aim: The position we're aiming for with the second
+            % bounce through controlling the normal vector
+            current_target_aim = Targets_all(end, :);
+        else
+            current_target_aim = targets(bnc + 1, :);
+        end
+    else    
+        % targets is a single stationary target
+        current_target_aim = targets;
     end
     current_normal = func_normal(StatesIn, current_target_aim); 
     
@@ -35,7 +41,11 @@ for bnc = 1 : nBounces
     % Fill in list of normal vector postions, now that we know the end time
     % and step count
     % The (:)' forces current_normal to be a row to follow ode45 syntax
-    current_normals = repelem(current_normal(:)', length(T), 1);
+    if bnc == 1
+        current_normals = repelem(current_normal(:)', length(T), 1);
+    else
+        current_normals = interp_normals(Normals_all(end, :), current_normal(:)', length(T));
+    end
     
     % current_target_bounce: Where we actually hope the next bounce is going to be
     if size(targets, 1) > 1
