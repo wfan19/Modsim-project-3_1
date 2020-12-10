@@ -35,7 +35,7 @@ for i = 1 : length(T)
     
     [X, Y] = meshgrid(Xbounds, Ybounds);
     surf_table = surf_plane(Normals(i, :), X, Y);
-    mesh(X, Y, surf_table);
+    mesh(X, Y, surf_table, 'EdgeColor', 'k');
     
     xlim(Xbounds);
     ylim(Ybounds);

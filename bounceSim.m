@@ -22,7 +22,7 @@ for bnc = 1 : nBounces
     if bnc + 1 > size(targets, 1)
         % current_target_aim: The position we're aiming for with the second
         % bounce through controlling the normal vector
-        current_target_aim = Targets_all(end, :);
+        current_target_aim = targets(end, :);% Targets_all(end, :);
     else
         current_target_aim = targets(bnc + 1, :);
     end
@@ -41,7 +41,7 @@ for bnc = 1 : nBounces
     if size(targets, 1) > 1
         current_target_bounce = targets(bnc, :);
     else
-        current_target_bounce = targets(1, :);
+        current_target_bounce = targets(1, :); % ?? bnc = 1 on first loop
     end
     current_targets = repelem(current_target_bounce(:)', length(T), 1);
     
