@@ -19,15 +19,21 @@ for bnc = 1 : nBounces
     % Before we "launch" the ball by starting the next simulation loop we
     % calculate the table angle we're going to use until after the next
     % bounce
-    if bnc + 1 > size(targets, 1)
-        % current_target_aim: The position we're aiming for with the second
-        % bounce through controlling the normal vector
-        current_target_aim = targets(end, :);% Targets_all(end, :);
+    if size(targets, 1) > 1
+        % targets is a list of target positions
+        if bnc + 1 > size(targets, 1)
+            % current_target_aim: The position we're aiming for with the second
+            % bounce through controlling the normal vector
+            current_target_aim = Targets_all(end, :);
+        else
+            current_target_aim = targets(bnc + 1, :);
+        end
     else
-        current_target_aim = targets(bnc + 1, :);
+        % targets is a single stationary target
+        current_target_aim = targets;
     end
-    current_normal = func_normal(StatesIn, current_target_aim); 
-    
+    current_normal = func_normal(StatesIn, current_target_aim);
+
     tspan = linspace(0, timeout, timeout * 20);
     [T, StatesOut, ~, ~, event] = ode45(@rate_func, tspan, StatesIn, options);
     % event tells us whether an event was triggered or ode45 timed out
@@ -35,8 +41,12 @@ for bnc = 1 : nBounces
     % Fill in list of normal vector postions, now that we know the end time
     % and step count
     % The (:)' forces current_normal to be a row to follow ode45 syntax
-    current_normals = repelem(current_normal(:)', length(T), 1);
-    
+    if bnc == 1
+        current_normals = repelem(current_normal(:)', length(T), 1);
+    else
+        current_normals = interp_normals(Normals_all(end, :), current_normal(:)', length(T));
+    end
+
     % current_target_bounce: Where we actually hope the next bounce is going to be
     if size(targets, 1) > 1
         current_target_bounce = targets(bnc, :);
@@ -44,14 +54,14 @@ for bnc = 1 : nBounces
         current_target_bounce = targets(1, :); % ?? bnc = 1 on first loop
     end
     current_targets = repelem(current_target_bounce(:)', length(T), 1);
-    
+
     % store the results in the output vectors
     if bnc == 1
         T_all = T;
     else
         T_all = [T_all; T + endTimes(bnc - 1)];
     end
-    
+
     States_all = [States_all; StatesOut];
     Normals_all = [Normals_all; current_normals];
     Targets_all = [Targets_all; current_targets];
@@ -61,7 +71,7 @@ for bnc = 1 : nBounces
     if isempty(event)
         break;
     end
-    
+
     % otherwise, prepare for the next iteration of ode45
     % find the new initial velocity, and keep the position the same
     StatesIn = StatesOut(end, :);
