@@ -34,7 +34,7 @@ for bnc = 1 : nBounces
     end
     current_normal = func_normal(StatesIn, current_target_aim);
 
-    tspan = linspace(0, timeout, timeout * 20);
+    tspan = linspace(0.01, timeout, timeout * 20);
     [T, StatesOut, ~, ~, event] = ode45(@rate_func, tspan, StatesIn, options);
     % event tells us whether an event was triggered or ode45 timed out
 
@@ -44,7 +44,8 @@ for bnc = 1 : nBounces
     if bnc == 1 || ~interpolation
         current_normals = repelem(current_normal(:)', length(T), 1);
     else
-        current_normals = interp_normals(Normals_all(end, :), current_normal(:)', length(T));
+        current_normals = [interp_normals(Normals_all(end, :), current_normal(:)', floor(length(T) / 2)); ...
+                            repelem(current_normal(:)', ceil(length(T) / 2), 1)];
     end
 
     % current_target_bounce: Where we actually hope the next bounce is going to be

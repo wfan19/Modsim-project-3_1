@@ -1,4 +1,4 @@
-function bounce_animation(T, States, Normals, Targets, save)
+function bounce_animation(plot_title, T, States, Normals, Targets, save)
 x = [-10, 10];
 y = [-10, 10];
 [X, Y] = meshgrid(x, y);
@@ -13,11 +13,14 @@ end
 min_tables = min(surf_tables, [], 'all');
 max_tables = max(surf_tables, [], 'all');
 
-Xbounds = [min(min(States(:, 1)), Targets(1)), max(max(States(:, 1)), Targets(1))];
-Ybounds = [min(min(States(:, 2)), Targets(2)), max(max(States(:, 2)), Targets(2))];
+max_x = max(abs(States(:, 1)));
+max_y = max(abs(States(:, 2)));
+Xbounds = max_x * [-1, 1];
+Ybounds = max_y * [-1, 1];
 Zbounds = [min(min(States(:, 3)), min_tables), max(max(States(:, 3)), max_tables)]; 
 
 fig = figure();
+set(fig, 'Position', [0 0 1280 720]);
 
 for i = 1 : length(T)
     current_normal = Normals(i, :);
@@ -37,12 +40,18 @@ for i = 1 : length(T)
     surf_table = surf_plane(Normals(i, :), X, Y);
     mesh(X, Y, surf_table, 'EdgeColor', 'k');
     
+    title(plot_title)
+
+    xlabel('X (m)')
+    ylabel('Y (m)')
+    zlabel('Z (m)')
+
     xlim(Xbounds);
     ylim(Ybounds);
     zlim(Zbounds);
     view(20, 10);
-    title('Bouncing ball simulation')
     grid on;
+    legend('Current target', 'Ball', 'Location', 'northwest');
     
     if save
         frame = getframe(fig);
