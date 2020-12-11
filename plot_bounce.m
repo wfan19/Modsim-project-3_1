@@ -2,7 +2,7 @@ function plot_bounce(States, p_0, Normals, T, bounceTimes)
 
 % Force bounceTimes to be a column
 bounceTimes = bounceTimes(:);
-uniqueNormals = unique(Normals);
+uniqueNormals = unique(Normals, 'rows');
 
 hold on;
 
